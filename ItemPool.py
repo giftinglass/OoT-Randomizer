@@ -243,10 +243,7 @@ normal_rupees = (
     ['Rupees (200)'] * 3)
 
 shopsanity_rupees = (
-    ['Rupees (5)'] * 2 +
-    ['Rupees (20)'] * 10 +
-    ['Rupees (50)'] * 10 +
-    ['Rupees (200)'] * 5 +
+    ['Rupees (200)'] * 27 +
     ['Progressive Wallet'])
 
 
