@@ -468,7 +468,7 @@ class World(object):
             for location in region.locations:
                 if location.type == 'Shop':
                     if location.name[-1:] in shop_item_indexes[:shop_item_count]:
-                        self.shop_prices[location.name] = 0
+                        self.shop_prices[location.name] = int(random.betavariate(1.5, 2) * 60) * 5
 
 
     def set_scrub_prices(self):
@@ -484,7 +484,7 @@ class World(object):
         for (scrub_item, default_price, text_id, text_replacement) in business_scrubs:
             price = default_price
             if self.settings.shuffle_scrubs == 'low':
-                price = 0
+                price = 10
             elif self.settings.shuffle_scrubs == 'random':
                 # this is a random value between 0-99
                 # average value is ~33 rupees
