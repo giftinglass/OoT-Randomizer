@@ -2854,6 +2854,8 @@ setting_infos = [
             '2':      '2 Items Per Shop',
             '3':      '3 Items Per Shop',
             '4':      '4 Items Per Shop',
+            '5':      '5 Items Per Shop',
+            '6':      '6 Items Per Shop',
             'random': 'Random # of Items Per Shop',
         },
         gui_tooltip    = '''\
@@ -2866,7 +2868,7 @@ setting_infos = [
             Remaining items will be shuffled between shops.
             
             'Random # of Items Per Shop': Each shop will
-            have 0 to 4 Special Deals.
+            have 0 to 6 Special Deals.
             
             The randomized items have no requirements
             except money, while the remaining items retain

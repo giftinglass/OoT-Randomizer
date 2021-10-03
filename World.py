@@ -457,11 +457,11 @@ class World(object):
 
 
     def random_shop_prices(self):
-        shop_item_indexes = ['7', '5', '8', '6']
+        shop_item_indexes = ['1', '2', '7', '5', '8', '6']
         self.shop_prices = {}
         for region in self.regions:
             if self.settings.shopsanity == 'random':
-                shop_item_count = random.randint(0,4)
+                shop_item_count = random.randint(0, 6)
             else:
                 shop_item_count = int(self.settings.shopsanity)
 

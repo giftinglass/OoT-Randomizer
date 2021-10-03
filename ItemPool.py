@@ -320,14 +320,8 @@ min_shop_items = (
     ['Buy Hylian Shield'] +
     ['Buy Goron Tunic'] +
     ['Buy Zora Tunic'] +
-    ['Buy Deku Nut (5)'] * 2 + ['Buy Deku Nut (10)'] +
-    ['Buy Deku Stick (1)'] * 2 +
-    ['Buy Deku Seeds (30)'] +
-    ['Buy Arrows (10)'] * 2 + ['Buy Arrows (30)'] + ['Buy Arrows (50)'] +
     ['Buy Bombchu (5)'] + ['Buy Bombchu (10)'] * 2 + ['Buy Bombchu (20)'] +
     ['Buy Bombs (5) [25]'] + ['Buy Bombs (5) [35]'] + ['Buy Bombs (10)'] + ['Buy Bombs (20)'] +
-    ['Buy Green Potion'] +
-    ['Buy Red Potion [30]'] +
     ['Buy Blue Fire'] +
     ['Buy Fairy\'s Spirit'] +
     ['Buy Bottle Bug'] +
@@ -1331,8 +1325,8 @@ def get_pool_core(world):
         for item in [item for item, weight in junk_pool_base] + ['Recovery Heart', 'Bombs (20)', 'Arrows (30)']:
             replace_max_item(pool, item, 0)
 
-    for item,max in item_difficulty_max[world.settings.item_pool_value].items():
-        replace_max_item(pool, item, max)
+    for item, maximum in item_difficulty_max[world.settings.item_pool_value].items():
+        replace_max_item(pool, item, maximum)
 
     world.distribution.alter_pool(world, pool)
 
