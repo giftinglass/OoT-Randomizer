@@ -10,11 +10,14 @@ from Colors import get_tunic_color_options, get_navi_color_options, get_sword_tr
     get_bombchu_trail_color_options, get_boomerang_trail_color_options, get_gauntlet_color_options, \
     get_magic_color_options, get_heart_color_options, get_shield_frame_color_options, get_a_button_color_options,\
     get_b_button_color_options, get_c_button_color_options, get_start_button_color_options
-from Hints import HintDistList, HintDistTips
+from Hints import HintDistList, HintDistTips, gossipLocations
+from Item import item_table
 from Location import LocationIterator
+from LocationList import location_table
 import Sounds as sfx
 import StartingItems
 from Utils import data_path
+from ItemList import item_table
 
 # holds the info for a single setting
 class Setting_Info():
@@ -161,7 +164,7 @@ logic_tricks = {
                     going through the Kakariko Village Gate as child
                     when coming from the Mountain Trail side.
                     '''},
-    'Child Deadhand without Kokiri Sword': {
+    'Child Dead Hand without Kokiri Sword': {
         'name'    : 'logic_child_deadhand',
         'tags'    : ("Bottom of the Well",),
         'tooltip' : '''\
@@ -632,6 +635,8 @@ logic_tricks = {
         'tooltip' : '''\
                     You can beat the quicksand by backwalking across it
                     in a specific way.
+                    Note that jumping to the carpet merchant as child
+                    typically requires a fairly precise jump slash.
                     '''},
     'Colossus Hill GS with Hookshot': {
         'name'    : 'logic_colossus_gs',
@@ -2231,7 +2236,7 @@ setting_infos = [
             to beat the game, but otherwise behaves like 'Required Only'.
             Goal items are the items required for the rainbow bridge and/or Ganon's Boss Key, so for example if the bridge is
             set to 1 Medallion and Ganon's Boss Key to 1 Gold Skulltula Token, all 6 Medallions and all 100 Tokens will
-            be obtainable. In Triforce Hunt, this will also guarantee that all Triforce Pieces can be obtained.
+            be obtainable. In Triforce Hunt, this will instead guarantee that all Triforce Pieces can be obtained.
 
             'Required Only': Only items and locations required to beat the game will be guaranteed reachable.
         ''',
@@ -2394,11 +2399,12 @@ setting_infos = [
     ),
     Checkbutton(
         name           = 'useful_cutscenes',
-        gui_text       = 'Enable Useful Cutscenes',
+        gui_text       = 'Enable Specific Glitch-Useful Cutscenes',
         gui_tooltip    = '''\
-            The cutscenes of the Poes in Forest Temple,
-            Darunia in Fire Temple, and the introduction
-            to Twinrova will not be skipped.
+            The cutscenes of the Poes in Forest Temple and Darunia in
+            Fire Temple will not be skipped. These cutscenes are useful
+            in glitched gameplay only and do not provide any timesave
+            for glitchless playthroughs.
         ''',
         shared         = True,
     ),
@@ -3670,7 +3676,14 @@ setting_infos = [
             "hide_when_disabled" : True,
         },
     ),
-    Setting_Info('item_hints',    list, None, None, True, {}),
+    Setting_Info(
+        name           = 'item_hints',
+        type           =  list,
+        gui_type       = None,
+        gui_text       = None,
+        shared         = True,
+        choices        = [i for i in item_table if item_table[i][0] == 'Item']
+    ),
     Setting_Info('hint_dist_user',    dict, None, None, True, {}),
     Combobox(
         name           = 'text_shuffle',
@@ -4860,7 +4873,8 @@ def build_close_match(name, value_type, source_list=None):
         source = [x.name for x in setting_infos]
     elif value_type == 'choice':
         source = source_list
-    close_match = difflib.get_close_matches(name, source, 1)
+    # Ensure name and source are type string to prevent errors
+    close_match = difflib.get_close_matches(str(name), map(str, source), 1)
     if len(close_match) > 0:
         return "Did you mean %r?" % (close_match[0])
     return "" # No matches

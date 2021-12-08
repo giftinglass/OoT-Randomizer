@@ -112,7 +112,14 @@ class World(object):
         else:
             self.settings.hint_dist = 'custom'
             self.hint_dist_user = self.settings.hint_dist_user
-            
+
+        # Hack for legacy hint distributions from before the goal hint
+        # type was created. Keeps validation happy.
+        if 'distribution' in self.hint_dist_user and 'goal' not in self.hint_dist_user['distribution']:
+            self.hint_dist_user['distribution']['goal'] = {"order": 0, "weight": 0.0, "fixed": 0, "copies": 0}
+        if 'use_default_goals' not in self.hint_dist_user:
+            self.hint_dist_user['use_default_goals'] = True
+
         # Validate hint distribution format
         # Originally built when I was just adding the type distributions
         # Location/Item Additions and Overrides are not validated
@@ -126,7 +133,7 @@ class World(object):
         if not hint_dist_valid:
             raise InvalidFileException("""Hint distributions require all hint types be present in the distro 
                                           (trial, always, woth, barren, item, song, overworld, dungeon, entrance,
-                                          sometimes, random, junk, named-item). If a hint type should not be
+                                          sometimes, random, junk, named-item, goal). If a hint type should not be
                                           shuffled, set its order to 0. Hint type format is \"type\": { 
                                           \"order\": 0, \"weight\": 0.0, \"fixed\": 0, \"copies\": 0 }""")
         
@@ -185,15 +192,21 @@ class World(object):
             max_tokens = max(max_tokens, self.settings.ganon_bosskey_tokens)
         tokens = [50, 40, 30, 20, 10]
         for t in tokens:
-            if f'{t} Gold Skulltula Reward' not in self.settings.disabled_locations:
+            if f'Kak {t} Gold Skulltula Reward' not in self.settings.disabled_locations:
                 max_tokens = max(max_tokens, t)
+                break
         self.max_progressions['Gold Skulltula Token'] = max_tokens
         # Additional Ruto's Letter become Bottle, so we may have to collect two.
         self.max_progressions['Rutos Letter'] = 2
 
         # Disable goal hints if the hint distro does not require them.
         # WOTH locations are always searched.
-        self.enable_goal_hints = self.hint_dist_user['distribution']['goal']['fixed'] != 0 or self.hint_dist_user['distribution']['goal']['weight'] != 0
+        self.enable_goal_hints = False
+        if ('distribution' in self.hint_dist_user and
+           'goal' in self.hint_dist_user['distribution'] and
+           (self.hint_dist_user['distribution']['goal']['fixed'] != 0 or
+                self.hint_dist_user['distribution']['goal']['weight'] != 0)):
+            self.enable_goal_hints = True
 
         # Initialize default goals for win condition
         self.goal_categories = OrderedDict()
@@ -375,6 +388,10 @@ class World(object):
         for region in region_json:
             new_region = Region(region['region_name'])
             new_region.world = self
+            if 'pretty_name' in region:
+                new_region.pretty_name = region['pretty_name']
+            if 'font_color' in region:
+                new_region.font_color = region['font_color']
             if 'scene' in region:
                 new_region.scene = region['scene']
             if 'hint' in region:
@@ -738,7 +755,10 @@ class World(object):
                 trials.goal_count += 1
 
             # Trials category is finalized and saved only if at least one trial is on
-            if self.settings.trials > 0:
+            # If random trials are on and one world in multiworld gets 0 trials, still
+            # add the goal to prevent key errors. Since no items fulfill the goal, it
+            # will always be invalid for that world and not generate hints.
+            if self.settings.trials > 0 or self.settings.trials_random:
                 trials.add_goal(trial_goal)
                 self.goal_categories[trials.name] = trials
 
@@ -951,7 +971,7 @@ class World(object):
         if self.settings.logic_grottos_without_agony and self.settings.hints != 'agony':
             # Stone of Agony skippable if not used for hints or grottos
             exclude_item_list.append('Stone of Agony')
-        if not self.shuffle_special_interior_entrances and not self.settings.shuffle_overworld_entrances and not self.settings.warp_songs and not self.settings.spawn_positions:
+        if not self.shuffle_special_interior_entrances and not self.settings.shuffle_overworld_entrances and not self.settings.warp_songs:
             # Serenade and Prelude are never required unless one of those settings is enabled
             exclude_item_list.append('Serenade of Water')
             exclude_item_list.append('Prelude of Light')
