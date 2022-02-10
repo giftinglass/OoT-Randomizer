@@ -2819,6 +2819,7 @@ setting_infos = [
         default        = 'off',
         choices        = {
             'off':     'Off',
+            'free':    'On (Free)',
             'low':     'On (Affordable)',
             'regular': 'On (Expensive)',
             'random':  'On (Random Prices)',

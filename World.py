@@ -500,6 +500,8 @@ class World(object):
         # Loop through each type of scrub.
         for (scrub_item, default_price, text_id, text_replacement) in business_scrubs:
             price = default_price
+            if self.settings.shuffle_scrubs == 'free':
+                price = 0
             if self.settings.shuffle_scrubs == 'low':
                 price = 10
             elif self.settings.shuffle_scrubs == 'random':
