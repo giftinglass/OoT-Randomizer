@@ -34,8 +34,11 @@ void handle_dpad() {
                 z64_playsfx(0x835, (z64_xyzf_t*)0x80104394, 0x04, (float*)0x801043A0, (float*)0x801043A0, (float*)0x801043A8);
             }
         }
+        if (pad_pressed.du /*&& z64_file.hammer*/){
+            z64_usebutton(&z64_game, &z64_link, z64_file.items[Z64_SLOT_HAMMER], 2);
+        }
         if (pad_pressed.dd && CAN_USE_OCARINA){
-            z64_usebutton(&z64_game,&z64_link,z64_file.items[0x07], 2);
+            z64_usebutton(&z64_game,&z64_link,z64_file.items[Z64_SLOT_HAMMER], 2);
         }
     }
 }
